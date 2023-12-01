@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Student View{% endblock %}
+{% block content %}
+
+<style>
+    details {
+        margin: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: large;
+    }
+
+    details summary {
+        background-color: #f2f2f2;
+        border: 1px solid #ddd;
+        padding: 10px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+</style>
+
+<div class="header">
+    <h1 align="center">Appointment View</h1>
+</div>
+
+{% set dates = [] %}
+{% for appointment in appointments %}
+    {% if appointment.appointment_date not in dates %}
+        {% set dates = dates.append(appointment.appointment_date) %}
+    {% endif %}
+{% endfor %}
+
+{% for date in dates %}
+<details>
+    <summary>{{ date }}</summary>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Appointment Type</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in appointments %}
+                {% if appointment.appointment_date == date %}
+                <tr>
+                    <td>{{ appointment.type }}</td>
+                    <td>{{ appointment.start_time }}</td>
+                    <td>{{ appointment.end_time }}</td>
+                    <td>{{ appointment.status }}</td>
+                    {% if appointment.status != 'reserved' %}
+                    <td>
+                        <form id="reserve-form-{{ appointment.id }}" method="POST" action="/reserve/{{ appointment.id }}">
+                            <input type="hidden" name="student_id" value="{{ current_user.id }}">
+                            <button type="button" class="btn btn-primary" onclick="confirmReservation('{{ appointment.id }}')">Reserve</button>
+                        </form>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</details>
+{% endfor %}
+
+<script>
+function confirmReservation(appointmentId) {
+    if (confirm("Are you sure you want to reserve this appointment?")) {
+        document.getElementById("reserve-form-" + appointmentId).submit();
+    }
+}
+</script>
+
+{% endblock %}

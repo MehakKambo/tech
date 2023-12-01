@@ -1,0 +1,177 @@
+{% extends "base.html" %} {% block title %}Admin{% endblock %} {% block content
+%}
+
+<form id="change-account-type-form" method="POST">
+  <div class="form-group">
+    <label for="id">User ID:</label>
+    <input
+      id="user-id-field"
+      type="text"
+      name="id"
+      class="form-control"
+      required
+    />
+  </div>
+  <div class="form-group">
+    <label for="account_type">Account Type:</label>
+    <select
+      id="account-type-field"
+      name="account_type"
+      class="form-control"
+      required
+    >
+      <option value="">Select an account type</option>
+      <option value="mentor">Mentor</option>
+      <option value="student">Student</option>
+      <option value="admin">Admin</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="account_type">Account Status:</label>
+    <select
+      id="new-status-field"
+      name="new-status"
+      class="form-control"
+      required
+    >
+      <option value="">Select an account status</option>
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+    </select>
+  </div>
+  <div align="center">
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </div>
+</form>
+<div class="header">
+  <h1 align="center">Admin</h1>
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Account Type</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %} {% if user.account_type=='admin' %}
+    <tr>
+      <td>{{ user.id }}</td>
+      <td>{{ user.first_name }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.account_type }}</td>
+      <td>{{ user.status }}</td>
+    </tr>
+    {% endif %} {% endfor %}
+  </tbody>
+</table>
+<div class="header">
+  <h1 align="center">Mentors</h1>
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Account Type</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %} {% if user.account_type=='mentor' %}
+    <tr>
+      <td>{{ user.id }}</td>
+      <td>{{ user.first_name }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.account_type }}</td>
+      <td>{{ user.status }}</td>
+    </tr>
+    {% endif %} {% endfor %}
+  </tbody>
+</table>
+<div class="header">
+  <h1 align="center">Students</h1>
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Account Type</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %} {% if user.account_type=='student' %}
+    <tr>
+      <td>{{ user.id }}</td>
+      <td>{{ user.first_name }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.account_type }}</td>
+      <td>{{ user.status }}</td>
+    </tr>
+    {% endif %} {% endfor %}
+  </tbody>
+</table>
+
+<script type="text/javascript">
+  document
+    .getElementById("change-account-type-form")
+    .addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const userId = document.getElementById("user-id-field").value;
+      const newType = document.getElementById("account-type-field").value;
+      const newStatus = document.getElementById("new-status-field").value;
+
+      changeAccountType(userId, newType);
+      changeAccountStatus(userId, newStatus);
+    });
+
+  function changeAccountType(userId, newType) {
+    fetch("/change-account-type", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: userId, newType: newType }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          // alert("Account type changed successfully");
+          window.location.href = "/admin";
+        } else {
+          alert("Error changing account type.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
+  function changeAccountStatus(userId, newStatus) {
+    fetch("/change-account-status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: userId, newStatus: newStatus }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          alert("Account changed successfully");
+          window.location.href = "/admin";
+        } else {
+          alert("Error changing account status.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+</script>
+
+{% endblock %}

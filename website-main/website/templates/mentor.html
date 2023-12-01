@@ -1,0 +1,86 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+  %}
+  
+  <!-- Include the CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  
+  
+  <h1 class="header" align="center">Session Availabilities</h1>
+  <ul class="list-group list-group-flush" id="availabilities">
+    {% for availability in user.availabilities %}
+    <li class="list-group-item">
+      {{ availability.id }} - {{ availability.type }} - {{availability.date}} -- {{ availability.start_time
+      }} - {{ availability.end_time }}
+      <button
+        type="button"
+        class="close"
+        onClick="deleteAvailability({{ availability.id }})"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </li>
+    {% endfor %}
+  </ul>
+  <form method="POST">
+    <!-- Select Appointment Type -->
+    <select name="type" class="form-control" required>
+      <option value="">Select an appointment type</option>
+      <option value="Mock Interview">Mock Interview</option>
+      <option value="Mentoring Session">Mentoring Session</option>
+    </select>
+  
+    <!-- Select Date -->
+    <label for="date">Date:</label>
+    <input
+      type="date"
+      name="date"
+      class="form-control"
+      required
+    />
+  
+    <!-- Select Start Time -->
+    <label for="start_time">Start Time:</label>
+    <input
+      type="text"
+      name="start_time"
+      class="form-control"
+      required
+      data-enable-time="true"
+      data-no-calendar="true" 
+      data-time_24hr="true"
+      data-minute-increment="30"
+    />
+  
+    <!-- Select End Time -->
+    <label for="end_time">End Time:</label>
+    <input
+      type="text"
+      name="end_time"
+      class="form-control"
+      required
+      data-enable-time="true"
+      data-no-calendar="true" 
+      data-time_24hr="true"
+      data-minute-increment="30"
+    />
+    <br />
+    <div align="center">
+      <button type="submit" class="btn btn-primary">Add Availability</button>
+    </div>
+  </form>
+  
+  <!-- Include the flatpickr library and initialize time pickers -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      flatpickr(".form-control[data-enable-time='true']", {
+        enableTime: true,
+        noCalendar: true,
+        time_24hr: true,
+        minuteIncrement: 30
+      });
+    });
+  </script>
+  
+  
+  {% endblock %}
